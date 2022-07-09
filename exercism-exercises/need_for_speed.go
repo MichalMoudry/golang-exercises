@@ -1,6 +1,5 @@
 package main
 
-// TODO: define the 'Car' type struct
 type Car struct {
 	battery      int
 	batteryDrain int
@@ -18,7 +17,6 @@ func NewCar(speed, batteryDrain int) Car {
 	}
 }
 
-// TODO: define the 'Track' type struct
 type Track struct {
 	distance int
 }
