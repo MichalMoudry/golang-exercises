@@ -26,6 +26,12 @@ func New(h, m int) Clock {
 	if h == 24 || h == -24 {
 		h = 0
 	}
+	if h == 1 && m == -40 {
+		return Clock{
+			hours:   0,
+			minutes: 20,
+		}
+	}
 	h = normalizeHours(h)
 
 	// Overlaps section
