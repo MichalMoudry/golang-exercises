@@ -4,21 +4,20 @@ package main
 type IntList []int
 
 func (s IntList) Foldl(fn func(int, int) int, initial int) int {
-	panic("Please implement the Foldl function")
+	return 0
 }
 
 func (s IntList) Foldr(fn func(int, int) int, initial int) int {
-	panic("Please implement the Foldr function")
+	return 0
 }
 
 func (s IntList) Filter(fn func(int) bool) IntList {
-	var res IntList
 	for _, v := range s {
 		if fn(v) {
-			res = append(res, v)
+			s = append(s, v)
 		}
 	}
-	return res
+	return s
 }
 
 func (s IntList) Length() int {
@@ -45,11 +44,10 @@ func (s IntList) Append(lst IntList) IntList {
 }
 
 func (s IntList) Concat(lists []IntList) IntList {
-	var res IntList
 	for _, v := range lists {
-		res = res.Append(v)
+		s = s.Append(v)
 	}
-	return res
+	return s
 }
 
 func mutiplyBy2(i int) int {
@@ -64,4 +62,6 @@ func main() {
 	println("----------------")
 	list.Reverse()
 	list.Map(mutiplyBy2)
+
+	//var list2 IntList = IntList{1, 2, 3, 4, 5, 1, 3, 5}
 }
