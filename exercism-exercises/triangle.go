@@ -9,26 +9,34 @@ const (
 	Sca = "Sca" // scalene
 )
 
-// KindFromSides should have a comment documenting it.
+// Method for validating input.
+func isTriangle(a, b, c float64) bool {
+	if a <= 0 || b <= 0 || c <= 0 {
+		return false
+	} else if ((a + b) < c) || ((b + c) < a) || ((a + c) < b) {
+		return false
+	}
+	return true
+}
+
+// Function determining triangle's kind based on length of its sides.
 func KindFromSides(a, b, c float64) Kind {
-	if a <= 0 || b <= 0 || c <= 0 || int(a+b+c)%3 == 0 {
+	if !isTriangle(a, b, c) {
 		return NaT
 	}
 	var k Kind
 	if a == b && b == c {
 		k = Equ
-	} else if (a == b && c != a) || (a == c && b != a) || (b == c && a != b) {
+	} else if a == b || b == c || a == c {
 		k = Iso
-	} else if a != b && b != c {
-		k = Sca
 	} else {
-		k = NaT
+		k = Sca
 	}
 	return k
 }
 
 func main() {
-	println("Triangle:", KindFromSides(5, 5, 5))
-	println("Triangle:", KindFromSides(5, 6, 6))
-	println("Triangle:", KindFromSides(5, 6, 7))
+	println("Triangle:", KindFromSides(1, 1, 5))
+	println("Triangle:", KindFromSides(1, 1, 1))
+	println("Triangle:", KindFromSides(1, 6, 1))
 }
