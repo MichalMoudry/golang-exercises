@@ -8,12 +8,34 @@ import (
 type IntList []int
 
 func (s IntList) Foldl(fn func(int, int) int, initial int) int {
+	length := len(s)
+	if length == 0 {
+		return initial
+	}
+	println("-------")
+	fmt.Println(s)
+	var current int
+	for i := 0; i < length; i++ {
+		if !((i+1)%2 == 0) {
+			current = s[i]
+			if i == length-1 {
+				initial = fn(initial, current)
+				continue
+			}
+			initial += fn(current, s[i+1])
+		}
+	}
+	println("-------")
 	return initial
 }
 
 func (s IntList) Foldr(fn func(int, int) int, initial int) int {
 	result := 0
-	println("----------")
+	length := len(s)
+	if length == 0 {
+		return result
+	}
+	/*println("----------")
 	maxLength := len(s) + 1
 	slc := make(IntList, maxLength)
 	for i, v := range s {
@@ -29,7 +51,7 @@ func (s IntList) Foldr(fn func(int, int) int, initial int) int {
 
 		}
 	}
-	println("------------")
+	println("------------")*/
 	return result
 }
 
@@ -90,10 +112,13 @@ func main() {
 	fmt.Println(simple_slice.Append(IntList{5, 4}).Filter(func(i int) bool { return i%2 == 1 }))
 	fmt.Println(simple_slice.Map(func(i int) int { return i + 1 }))
 
-	foldr_slice := IntList{2, 5}
+	foldr_slice := IntList{1, 2, 3, 4, 5}
 	fmt.Println(
-		foldr_slice.Foldr(
-			func(i1, i2 int) int { return i1 / i2 },
+		foldr_slice.Foldl(
+			func(i1, i2 int) int {
+				fmt.Println("Adding:", i1, "+", i2)
+				return i1 + i2
+			},
 			5,
 		),
 	)
