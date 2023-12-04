@@ -12,21 +12,31 @@ func (s IntList) Foldl(fn func(int, int) int, initial int) int {
 	if length == 0 {
 		return initial
 	}
-	println("-------")
-	fmt.Println(s)
-	var current int
+	array := make(IntList, length+1)
+	array[0] = initial
 	for i := 0; i < length; i++ {
-		if !((i+1)%2 == 0) {
-			current = s[i]
-			if i == length-1 {
-				initial = fn(initial, current)
-				continue
-			}
-			initial += fn(current, s[i+1])
-		}
+		array[i+1] = s[i]
 	}
-	println("-------")
+
 	return initial
+	/*var next int
+	var current int
+	var result int
+	for i := 0; i < length; i += 2 {
+		if i != 0 {
+			current = s[i]
+			if i+1 != length {
+				next = s[i+1]
+			} else {
+				next = 0
+			}
+		} else {
+			current = initial
+			next = s[i]
+		}
+		result += fn(current, next)
+	}
+	return result*/
 }
 
 func (s IntList) Foldr(fn func(int, int) int, initial int) int {
@@ -112,12 +122,24 @@ func main() {
 	fmt.Println(simple_slice.Append(IntList{5, 4}).Filter(func(i int) bool { return i%2 == 1 }))
 	fmt.Println(simple_slice.Map(func(i int) int { return i + 1 }))
 
-	foldr_slice := IntList{1, 2, 3, 4, 5}
+	foldr_slice := IntList{1, 2, 3, 4}
 	fmt.Println(
 		foldr_slice.Foldl(
 			func(i1, i2 int) int {
 				fmt.Println("Adding:", i1, "+", i2)
 				return i1 + i2
+			},
+			5,
+		),
+	)
+
+	// Foldl - direction dependent function applied to non-empty list
+	foldl_slice2 := IntList{2, 5}
+	fmt.Println(
+		foldl_slice2.Foldl(
+			func(i1, i2 int) int {
+				fmt.Println("Dividing:", i1, "/", i2)
+				return i1 / i2
 			},
 			5,
 		),
