@@ -12,11 +12,13 @@ func (s IntList) Foldl(fn func(int, int) int, initial int) int {
 	if length == 0 {
 		return initial
 	}
+	println("----------------------")
 	array := make(IntList, length+1)
 	array[0] = initial
 	for i := 0; i < length; i++ {
 		array[i+1] = s[i]
 	}
+	println("----------------------")
 
 	return initial
 	/*var next int
@@ -131,6 +133,7 @@ func main() {
 			},
 			5,
 		),
+		"want: 15",
 	)
 
 	// Foldl - direction dependent function applied to non-empty list
@@ -143,5 +146,6 @@ func main() {
 			},
 			5,
 		),
+		"want: 0",
 	)
 }
