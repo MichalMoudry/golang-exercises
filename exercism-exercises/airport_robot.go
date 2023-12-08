@@ -8,7 +8,7 @@ type Greeter interface {
 }
 
 func SayHello(visitor string, greeter Greeter) string {
-	return greeter.Greet(visitor)
+	return fmt.Sprintf("I can speak %s: %s", greeter.LanguageName(), greeter.Greet(visitor))
 }
 
 type Italian struct{}
@@ -18,7 +18,7 @@ func (Italian) LanguageName() string {
 }
 
 func (Italian) Greet(visitor string) string {
-	return fmt.Sprintf("Cialo %s!", visitor)
+	return fmt.Sprintf("Ciao %s!", visitor)
 }
 
 type Portuguese struct{}
@@ -35,4 +35,8 @@ func main() {
 	italianRobot := Italian{}
 	fmt.Println(italianRobot.LanguageName())
 	fmt.Println(italianRobot.Greet("Michal"))
+	fmt.Println(SayHello("Tomaso Giulio Micheli", italianRobot))
+
+	portugeseRobot := Portuguese{}
+	fmt.Println(SayHello("Manuela Alberto", portugeseRobot))
 }
