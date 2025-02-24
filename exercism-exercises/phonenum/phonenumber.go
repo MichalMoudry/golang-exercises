@@ -3,33 +3,29 @@ package phonenum
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
-var (
-	InvalidPhoneNumberErr = errors.New("invalid phone number")
-)
+var ErrInvalidPhoneNumber = errors.New("invalid phone number")
 
 func Number(phoneNumber string) (string, error) {
-	replacer := strings.NewReplacer(
-		"(", "",
-		")", "",
-		" ", "",
-		"-", "",
-		".", "",
-		"+", "",
-	)
-	trimmedNumber := replacer.Replace(phoneNumber)
-	numberLen := len(trimmedNumber)
-
-	if numberLen == 11 && trimmedNumber[0] != '1' {
-		return "", InvalidPhoneNumberErr
-	} else if numberLen == 11 {
-		trimmedNumber = trimmedNumber[1:]
-	} else if numberLen != 10 {
-		return "", InvalidPhoneNumberErr
+	replacer := strings.NewReplacer("(", "", ")", "", " ", "", "-", "", ".", "", "+1", "")
+	result := replacer.Replace(phoneNumber)
+	resultLength := len(result)
+	if resultLength > 11 {
+		return "", ErrInvalidPhoneNumber
+	} else if resultLength == 11 && result[0] != '1' {
+		return "", ErrInvalidPhoneNumber
+	} else if result[3] == '0' || result[3] == '1' { //Validate exchange codes
+		return "", ErrInvalidPhoneNumber
+	} else if _, err := strconv.Atoi(result); err != nil {
+		return "", err
 	}
-	return trimmedNumber, nil
+	if resultLength == 11 {
+		result = strings.TrimPrefix(result, "1")
+	}
+	return result, nil
 }
 
 func AreaCode(phoneNumber string) (string, error) {
@@ -37,43 +33,61 @@ func AreaCode(phoneNumber string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return number[0:3], nil
+	return number[:3], nil
 }
 
 func Format(phoneNumber string) (string, error) {
-	num, err := Number(phoneNumber)
-	if err != nil {
-		return "", err
-	}
-	areaCode, err := AreaCode(num)
-	if err != nil {
-		return "", err
-	}
-	exchangeCode := num[3:6]
-	return fmt.Sprintf("(%s) %s-%s", areaCode, exchangeCode, num[6:10]), nil
+	return phoneNumber, nil
 }
 
 func Run() {
-	// Test case 1
-	input1 := "(223) 456-7890"
-	num, err := Number(input1)
-	fmt.Println(num, err, num == "2234567890")
+	inputs := []string{
+		"+1 (613)-995-0253",
+		"613-995-0253",
+		"1 613 995 0253",
+		"613.995.0253",
+		"22234567890",
+		"321234567890",
+		"523-abc-7890",
+		"(023) 456-7890",
+		"(223) 056-7890",
+		"(123) 456-7890",
+		"12234567890",
+	}
 
-	areaCode, err := AreaCode(input1)
-	fmt.Println(areaCode, err, areaCode == "223")
+	for _, v := range inputs {
+		str, err := Number(v)
+		if err != nil {
+			fmt.Println(v, "=>", err)
+		} else {
+			fmt.Println(v, "=>", str)
+		}
+	}
 
-	formatted, err := Format(input1)
-	fmt.Println(formatted, err, formatted == "(223) 456-7890")
+	areaCodeInputs := []string{
+		"(223) 456-7890",
+	}
 
-	fmt.Println("------------------------")
-	// Test case 2
-	input2 := "223.456.7890"
-	num, err = Number(input2)
-	fmt.Println(num, err, num == "2234567890")
+	fmt.Println("-- Area codes")
+	for _, v := range areaCodeInputs {
+		code, err := AreaCode(v)
+		if err != nil {
+			fmt.Println(v, "=> err:", err)
+		} else {
+			fmt.Println(v, "=>", code)
+		}
+	}
 
-	areaCode, err = AreaCode(input2)
-	fmt.Println(areaCode, err, areaCode == "223")
-
-	formatted, err = Format(input2)
-	fmt.Println(formatted, err, formatted == "(223) 456-7890")
+	fmt.Println("-- Format")
+	formatInput := []string{
+		"223.456.7890",
+	}
+	for _, v := range formatInput {
+		res, err := Format(v)
+		if err != nil {
+			fmt.Println(v, "=> err:", err)
+		} else {
+			fmt.Println(v, "=>", res)
+		}
+	}
 }
