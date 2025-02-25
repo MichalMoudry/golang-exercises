@@ -1,7 +1,9 @@
 package main
 
-import "exercism-exercises/phonenum"
+import (
+	"exercism-exercises/set"
+)
 
 func main() {
-	phonenum.Run()
+	set.Run()
 }
