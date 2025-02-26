@@ -1,9 +1,9 @@
 package main
 
 import (
-	"exercism-exercises/set"
+	"exercism-exercises/strain"
 )
 
 func main() {
-	set.Run()
+	strain.Run()
 }

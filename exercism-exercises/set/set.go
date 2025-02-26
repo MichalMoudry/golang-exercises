@@ -93,8 +93,12 @@ func Subset(s1, s2 Set) bool {
 		return false
 	}
 
+	first := slices.Index(s2.items, s1.items[0])
+	if first == -1 {
+		return false
+	}
 	for i, v := range s1.items {
-		if s2.items[i] != v {
+		if v != s2.items[i+first] {
 			return false
 		}
 	}
@@ -148,10 +152,7 @@ func Difference(s1, s2 Set) Set {
 
 func Union(s1, s2 Set) Set {
 	arr := make([]string, len(s1.items)+len(s2.items))
-
-	for i, v := range s1.items {
-		arr[i] = v
-	}
+	copy(arr, s1.items)
 
 	offset := len(s1.items)
 	for i, v := range s2.items {
@@ -176,8 +177,10 @@ func Run() {
 	set = NewFromSlice([]string{"a", "a", "a", "b", "b", "c", "b"})
 	fmt.Println(set)
 
-	isSubset := Subset(set, NewFromSlice([]string{"a", "b", "c"}))
-	fmt.Println("Is subset:", isSubset, Subset(New(), NewFromSlice([]string{"a"})))
+	isSubset := Subset(NewFromSlice([]string{"a", "b", "c"}), NewFromSlice([]string{"d", "a", "b", "c"}))
+	fmt.Println("Is subset:", isSubset)
+	/*isSubset := Subset(set, NewFromSlice([]string{"a", "b", "c"}))
+	fmt.Println("Is subset:", isSubset, Subset(New(), NewFromSlice([]string{"a"})))*/
 
 	isEqual := Equal(NewFromSlice([]string{"b", "a"}), NewFromSlice([]string{"a", "b"}))
 	fmt.Println("Is equal:", isEqual)
