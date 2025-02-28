@@ -1,9 +1,9 @@
 package main
 
 import (
-	"exercism-exercises/flatten"
+	"exercism-exercises/tree"
 )
 
 func main() {
-	flatten.Run()
+	tree.Run()
 }
