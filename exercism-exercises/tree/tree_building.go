@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+var (
+	ErrEmptyTree = errors.New("empty tree")
+)
+
 type Record struct {
 	ID     int
 	Parent int
@@ -18,59 +22,32 @@ type Node struct {
 	// feel free to add fields as you see fit
 }
 
-func (n *Node) String() string {
+func innerString(n *Node, level int) string {
 	sb := strings.Builder{}
-	sb.WriteString(fmt.Sprintf("node: %d\n", n.ID))
-	for i, v := range n.Children {
-		if i == len(n.Children)-1 {
-			sb.WriteString(fmt.Sprintf("|--node: %d", v.ID))
-		} else {
-			sb.WriteString(fmt.Sprintf("|--node: %d\n", v.ID))
-		}
+	if level == 0 {
+		sb.WriteString(fmt.Sprintf("node: %d\n", n.ID))
+		sb.WriteString(innerString(n, level+1))
 	}
 	return sb.String()
 }
 
-var (
-	ErrEmptyTree = errors.New("empty tree")
-)
+func (n *Node) String() string {
+	return innerString(n, n.ID)
+	/*sb.WriteString(fmt.Sprintf("node: %d\n", n.ID))
+	subNodesCount := len(n.Children)
+	if subNodesCount >= 0 {
+		sb.WriteRune('|')
+	}
+	for i, subNodes := range n.Children {
+		if i == subNodesCount-1 {
+			sb.WriteString(fmt.Sprintf("--%s", subNodes.String()))
+		} else {
+			sb.WriteString(fmt.Sprintf("--%s", subNodes.String()))
+		}
+	}*/
+}
 
 func Build(records []Record) (*Node, error) {
-	/*if len(records) == 0 {
-		return nil, ErrEmptyTree
-	}
-
-	// Expected tree is a root tree, so the first node will have index of 0
-	result := &Node{Children: make([]*Node, 0)}
-	for i, v := range records {
-		isRoot := false
-		for _, j := range records {
-			if j.Parent == i {
-				isRoot = true
-				break
-			}
-		}
-
-		if v.ID == 0 && isRoot {
-			result.ID = v.ID
-		} else if result.ID == v.Parent {
-			// if node is a root of a subtree
-			if isRoot {
-				/*filteredRecords := make([]Record, 0, 2)
-				filteredRecords = append(filteredRecords, v)
-				for _, subNode := range records {
-					if subNode.Parent == v.ID {
-						filteredRecords = append(filteredRecords, subNode)
-					}
-				}
-				nodeToAppend, _ := Build(filteredRecords)
-				result.Children = append(result.Children, nodeToAppend)
-				continue
-			}
-			result.Children = append(result.Children, &Node{ID: v.ID})
-		}
-	}
-	return result, nil*/
 	if len(records) == 0 {
 		return nil, ErrEmptyTree
 	}
@@ -95,6 +72,7 @@ func innerBuild(records []Record, rootIndex int) (*Node, error) {
 			}
 
 			if hasSubTree {
+				// TODO: optimize recursion
 				filteredRecords := make([]Record, 0, 2)
 				filteredRecords = append(filteredRecords, node)
 				for _, subNode := range records {
