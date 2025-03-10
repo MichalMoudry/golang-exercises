@@ -36,7 +36,7 @@ var (
 )
 
 func Build(records []Record) (*Node, error) {
-	if len(records) == 0 {
+	/*if len(records) == 0 {
 		return nil, ErrEmptyTree
 	}
 
@@ -54,9 +54,59 @@ func Build(records []Record) (*Node, error) {
 		if v.ID == 0 && isRoot {
 			result.ID = v.ID
 		} else if result.ID == v.Parent {
-			//test, err := Build(records)
-			//fmt.Println(test, err)
+			// if node is a root of a subtree
+			if isRoot {
+				/*filteredRecords := make([]Record, 0, 2)
+				filteredRecords = append(filteredRecords, v)
+				for _, subNode := range records {
+					if subNode.Parent == v.ID {
+						filteredRecords = append(filteredRecords, subNode)
+					}
+				}
+				nodeToAppend, _ := Build(filteredRecords)
+				result.Children = append(result.Children, nodeToAppend)
+				continue
+			}
 			result.Children = append(result.Children, &Node{ID: v.ID})
+		}
+	}
+	return result, nil*/
+	if len(records) == 0 {
+		return nil, ErrEmptyTree
+	}
+
+	return innerBuild(records, 0)
+}
+
+func innerBuild(records []Record, rootIndex int) (*Node, error) {
+	// Expected tree is a root tree, so the first node will have index of 0
+	result := &Node{Children: make([]*Node, 0)}
+	for _, node := range records {
+		if node.ID == rootIndex {
+			result.ID = rootIndex
+		} else if result.ID == node.Parent {
+			// if node is a root of a subtree
+			hasSubTree := false
+			for _, subNode := range records {
+				if subNode.Parent == node.ID {
+					hasSubTree = true
+					break
+				}
+			}
+
+			if hasSubTree {
+				filteredRecords := make([]Record, 0, 2)
+				filteredRecords = append(filteredRecords, node)
+				for _, subNode := range records {
+					if subNode.Parent == node.ID {
+						filteredRecords = append(filteredRecords, subNode)
+					}
+				}
+				nodeToAppend, _ := innerBuild(filteredRecords, node.ID)
+				result.Children = append(result.Children, nodeToAppend)
+				continue
+			}
+			result.Children = append(result.Children, &Node{ID: node.ID})
 		}
 	}
 	return result, nil
